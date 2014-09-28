@@ -110,7 +110,7 @@ We use GDB to dissasemble the *main* function:
 The structure of this first example should be quite obvious:
 * `printf()` is called twice to print *IOLI Crackme Level 0x00* (`0x08048437`) and *Password:* (`0x08048443`);
 * after which text is read from stdin with scanf (`0x08048456`);
-* the input is compared against the password with strcmp (`0x08048469`);
+* the input is compared against the password with `strcmp()` (`0x08048469`);
 * and depending on the result either a success (`0x08048480`) or failure(`0x08048479`) message is printed out
 
 The parameters passed to printf can be inspected with *x/s*, e.g.
@@ -120,7 +120,7 @@ The parameters passed to printf can be inspected with *x/s*, e.g.
 0x80485a9:	"Password OK :)\n"
 ```
 
-The conditional branch instruction which determines which message gets printed is at `0x08048470`: `JE 0x8048480` and it is taken when the return value of strcmp is 0. Since we want to always print the success message, we'll modify it to execute unconditionally by inserting the following code in the `event_basic_block` switch statement:
+The conditional branch instruction which determines which message gets printed is at `0x08048470`: `JE 0x8048480` and it is taken when the return value of `strcmp()` is 0. Since we want to always print the success message, we'll modify it to execute unconditionally by inserting the following code in the `event_basic_block` switch statement:
 
 ```c
 case 0:
@@ -150,7 +150,7 @@ Dump of assembler code for function main:
 0x08048432 <+78>:	je     0x8048442 <main+94>
 ```
 
-The major difference being that there is no call to strcmp. To understand what is going on, we can set a breakpoint right before `scanf()` is called and inspect its parameters:
+The major difference being that there is no call to `strcmp()`. To understand what is going on, we can set a breakpoint right before `scanf()` is called and inspect its parameters:
 
 ```
 (gdb) b *0x08048426
